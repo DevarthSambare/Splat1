@@ -67,6 +67,13 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            controls.update();  // Update c
+            controls.update();  // Update controls
+            renderer.render(scene, camera);  // Render the scene from the camera perspective
+        }
+
+        // Initialize the viewer and animation loop
+        init();
+        animate();
+    </script>
 </body>
 </html>
