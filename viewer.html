@@ -31,10 +31,17 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            // Add some basic lighting
+            // Add basic lighting
             const light = new THREE.PointLight(0xFFFFFF, 1, 100);
             light.position.set(0, 0, 10);
             scene.add(light);
+
+            // Check if PLYLoader is loaded
+            if (THREE.PLYLoader) {
+                console.log('PLYLoader is available');
+            } else {
+                console.error('PLYLoader is not available');
+            }
 
             // Load the PLY model
             const loader = new THREE.PLYLoader();
@@ -47,14 +54,16 @@
                 scene.add(mesh);
                 mesh.scale.set(0.5, 0.5, 0.5);
                 mesh.position.set(0, 0, 0);
-            }, undefined, function (error) {
-                console.error('Error loading PLY file: ', error);
+            }, function (progress) {
+                console.log('Loading progress: ', progress);  // Debugging loading progress
+            }, function (error) {
+                console.error('Error loading PLY file: ', error);  // Debugging error handling
             });
 
             // Set up OrbitControls
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            // Window resize handling
+            // Handle window resize
             window.addEventListener('resize', onWindowResize, false);
 
             animate();
