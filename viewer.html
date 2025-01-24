@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Viewer</title>
-    <!-- Include AR.js and Three.js -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GLTF Model Viewer</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-</head>
-<body style="margin: 0; overflow: hidden;">
-    <!-- Setup AR scene -->
-    <a-scene embedded arjs>
-        <!-- Marker for AR display -->
-        <a-marker preset="hiro">
-            <!-- GLTF model to load -->
-            <a-entity 
-                gltf-model="url(model.glb)" 
-                scale="0.5 0.5 0.5"
-                position="0 0 0"
-                rotation="0 180 0">
-            </a-entity>
-        </a-marker>
-        <!-- Camera to view the AR scene -->
-        <a-camera></a-camera>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.4.0/dist/aframe-extras.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        height: 100vh;
+      }
+      a-scene {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Camera with orbit controls -->
+      <a-camera position="0 1.6 3" wasd-controls-enabled="true"></a-camera>
+
+      <!-- GLTF Model -->
+      <a-entity
+        gltf-model="url(splat1.gltf)" <!-- Update with the correct file name -->
+        scale="0.5 0.5 0.5"
+        position="0 1.5 -3"
+        rotation="0 45 0"
+      ></a-entity>
+
+      <!-- Lighting -->
+      <a-light type="ambient" intensity="0.6" position="0 3 0"></a-light>
+      <a-light type="directional" intensity="0.8" position="0 3 3" target="#model"></a-light>
+
+      <!-- Ground -->
+      <a-plane color="#7BC8A4" width="10" height="10" position="0 0 -5" rotation="-90 0 0"></a-plane>
     </a-scene>
-</body>
+  </body>
 </html>
