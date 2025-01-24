@@ -14,41 +14,59 @@
     <script src="https://cdn.jsdelivr.net/npm/ply-loader@1.0.0/ply-loader.min.js"></script>
 
     <script>
-        // Create scene, camera, and renderer
+        // Create the scene, camera, and renderer
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Load the .ply file using the PlyLoader
+        // Lighting: Add ambient light and a directional light
+        const ambientLight = new THREE.AmbientLight(0x404040, 1); // Ambient light
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Directional light
+        directionalLight.position.set(5, 5, 5).normalize();
+        scene.add(directionalLight);
+
+        // Load the .ply file using PlyLoader
         const loader = new THREE.PLYLoader();
         const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply'; // Your raw .ply file URL
 
         loader.load(url, function (geometry) {
-            const material = new THREE.MeshBasicMaterial({ color: 0x0055ff, wireframe: true });
+            // Add material and create mesh
+            const material = new THREE.MeshStandardMaterial({ color: 0x0055ff, wireframe: false });
             const mesh = new THREE.Mesh(geometry, material);
             scene.add(mesh);
-            mesh.rotation.x = -Math.PI / 2;  // Optional: Rotate mesh for better viewing
+
+            // Scale and center the mesh
+            mesh.scale.set(0.5, 0.5, 0.5);
+            mesh.position.set(0, -0.5, 0);
+        }, undefined, function (error) {
+            console.error(error);
         });
 
-        // Set the camera position
+        // Camera position
         camera.position.z = 3;
 
-        // Render the scene
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
+        // Controls: OrbitControls to enable rotation
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-        animate();
-
-        // Adjust canvas size on window resize
+        // Resize handling
         window.addEventListener('resize', function () {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         });
+
+        // Render the scene
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // Update controls (for rotation)
+            renderer.render(scene, camera);
+        }
+
+        animate();
     </script>
 </body>
 </html>
