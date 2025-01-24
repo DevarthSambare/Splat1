@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Point Cloud Visualization</title>
+    <title>Gaussian Splatting Viewer</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
-    <canvas id="renderCanvas" style="width: 100%; height: 100vh;"></canvas>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="yourScript.js"></script> <!-- Link to your custom JavaScript file -->
+    <!-- Include Three.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
+    <!-- Link to your script -->
+    <script src="yourscript.js"></script>
 </body>
 </html>
