@@ -1,10 +1,29 @@
 // Function to load the PLY file and parse it
 function loadPLY(fileUrl, callback) {
     fetch(fileUrl)
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch PLY file');
+            }
+            return response.text();
+        })
         .then(plyData => {
+            if (!plyData) {
+                throw new Error('PLY file is empty');
+            }
+
             const lines = plyData.split("\n");
+
+            // Check if the PLY file has a valid header
+            if (!lines.some(line => line.startsWith("element vertex"))) {
+                throw new Error('Invalid PLY file format');
+            }
+
             let headerEndIndex = lines.findIndex(line => line.startsWith("end_header"));
+            if (headerEndIndex === -1) {
+                throw new Error('Header not found in PLY file');
+            }
+
             let vertexCount = 0;
             let vertices = [];
 
@@ -15,9 +34,18 @@ function loadPLY(fileUrl, callback) {
                 }
             }
 
+            // Ensure vertex count is valid
+            if (vertexCount <= 0) {
+                throw new Error('Invalid number of vertices in PLY file');
+            }
+
             // Read the vertex data
             for (let i = headerEndIndex + 1; i < headerEndIndex + 1 + vertexCount; i++) {
                 const line = lines[i].split(" ");
+                if (line.length < 4) {
+                    console.warn('Skipping malformed vertex data at line ' + i);
+                    continue; // Skip invalid vertex lines
+                }
                 const x = parseFloat(line[0]);
                 const y = parseFloat(line[1]);
                 const z = parseFloat(line[2]);
@@ -45,6 +73,11 @@ document.body.appendChild(renderer.domElement);
 
 // Load the PLY model (your splat1.ply)
 loadPLY('https://raw.githubusercontent.com/DevarthSambare/Splat1/main/splat1.ply', (vertices) => {
+    if (vertices.length === 0) {
+        console.error('No vertices found in PLY file');
+        return;
+    }
+
     const material = new THREE.ShaderMaterial({
         vertexShader: `
             void main() {
