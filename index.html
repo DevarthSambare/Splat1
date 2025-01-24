@@ -3,82 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLY File Viewer</title>
+    <title>PLY Viewer using Babylon.js</title>
     <style>
-        body { margin: 0; }
+        body { margin: 0; overflow: hidden; }
         canvas { display: block; }
     </style>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/PLYLoader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/TrackballControls.js"></script>
-
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script>
-        let scene, camera, renderer, controls, loader;
+        // Create the scene and the canvas
+        var canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        var engine = new BABYLON.Engine(canvas, true);
+        var scene = new BABYLON.Scene(engine);
 
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+        // Create a camera
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
 
-            // Set up TrackballControls
-            controls = new THREE.TrackballControls(camera, renderer.domElement);
-            controls.rotateSpeed = 2.0;
-            controls.zoomSpeed = 1.2;
-            controls.panSpeed = 0.8;
+        // Create a light source
+        var light = new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Up(), scene);
 
-            // Set up lighting
-            const light = new THREE.AmbientLight(0xffffff, 1);
-            scene.add(light);
-
-            // Add a directional light
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            dirLight.position.set(1, 1, 1);
-            scene.add(dirLight);
-
-            // Load the PLY file
-            loader = new THREE.PLYLoader();
-            loader.load('https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply', function (geometry) {
-                console.log('PLY File Loaded');
-                const material = new THREE.MeshStandardMaterial({ color: 0x0055ff, wireframe: false });
-                const mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-
-                // Scale and position the mesh
-                mesh.scale.set(0.5, 0.5, 0.5);
-                mesh.position.set(0, -0.5, 0);
-
-                // Center the camera and start the animation loop
-                camera.position.set(0, 1, 3);
-                animate();
-            }, 
-            function (progress) {
-                console.log('Loading progress: ', progress);
-            }, 
-            function (error) {
-                console.error('Error loading PLY file: ', error);
+        // Load the PLY model
+        BABYLON.SceneLoader.Append("", "https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply", scene, function () {
+            console.log("PLY Model Loaded Successfully");
+            engine.runRenderLoop(function () {
+                scene.render();
             });
+        }, function (scene, message) {
+            console.log("Error loading PLY: " + message);
+        });
 
-            // Handle window resizing
-            window.addEventListener('resize', onWindowResize, false);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update(); // Update the controls for smooth camera movements
-            renderer.render(scene, camera);
-        }
-
-        init();
+        // Handle resizing of the window
+        window.addEventListener('resize', function () {
+            engine.resize();
+        });
     </script>
 </body>
 </html>
