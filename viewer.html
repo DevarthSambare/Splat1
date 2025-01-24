@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLY Viewer</title>
+    <title>Basic Three.js Scene</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -11,7 +11,6 @@
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/PLYLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
     <script>
         let scene, camera, renderer, controls;
@@ -38,25 +37,11 @@
             directionalLight.position.set(1, 1, 1).normalize();
             scene.add(directionalLight);
 
-            // Load the PLY file using PLYLoader
-            const loader = new THREE.PLYLoader();
-            const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply'; // Replace with your PLY file URL
-            console.log('Attempting to load PLY file from: ' + url);
-
-            loader.load(url, function (geometry) {
-                console.log('PLY File Loaded');
-                const material = new THREE.MeshStandardMaterial({ color: 0x0055ff, wireframe: false });
-                const mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-
-                // Scale and center the mesh
-                mesh.scale.set(0.5, 0.5, 0.5);
-                mesh.position.set(0, -0.5, 0);
-            }, function (progress) {
-                console.log('Loading progress: ', progress);  // For debugging loading progress
-            }, function (error) {
-                console.error('Error loading PLY file: ', error);  // For debugging errors
-            });
+            // Add a cube to the scene
+            const geometry = new THREE.BoxGeometry();
+            const material = new THREE.MeshStandardMaterial({ color: 0x0055ff });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
 
             // Set up orbit controls for camera manipulation
             controls = new THREE.OrbitControls(camera, renderer.domElement);
