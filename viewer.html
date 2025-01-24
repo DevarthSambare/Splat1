@@ -43,6 +43,7 @@
                 camera.position.z = 3;
             }, undefined, function (error) {
                 console.error('Error loading PLY file:', error);
+                alert('Failed to load the PLY file. Please check the URL or your CORS settings.');
             });
 
             // Event listener for mouse movement
