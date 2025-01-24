@@ -13,44 +13,29 @@ window.addEventListener('DOMContentLoaded', function() {
         var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 1), scene);
         light.intensity = 0.7;
 
-        // Custom Shader for Point Rendering
-        BABYLON.Effect.ShadersStore["customVertexShader"] = `
-            precision highp float;
-            attribute vec3 position;
-            attribute float pointSize;
-            attribute vec3 color;
-            uniform mat4 worldViewProjection;
-            varying vec3 vColor;
-            void main() {
-                gl_PointSize = pointSize;
-                gl_Position = worldViewProjection * vec4(position, 1.0);
-                vColor = color;
-            }
-        `;
-
-        BABYLON.Effect.ShadersStore["customFragmentShader"] = `
-            precision highp float;
-            varying vec3 vColor;
-            void main() {
-                gl_FragColor = vec4(vColor, 1.0);
-            }
-        `;
-
-        // Create custom shader material
-        var customMaterial = new BABYLON.ShaderMaterial("customMaterial", scene, {
-            vertex: "custom",
-            fragment: "custom",
-        }, {
-            attributes: ["position", "pointSize", "color"],
-            uniforms: ["worldViewProjection"]
-        });
+        // Log the scene loading process to ensure everything is set
+        console.log("Scene created!");
 
         // Load PLY file
-        BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/DevarthSambare/Splat1/main/", "splat1.ply", scene, function (newMeshes) {
-            var mesh = newMeshes[0];
-            mesh.material = customMaterial;
-            mesh.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1); // Adjust scale as needed
-            mesh.position = new BABYLON.Vector3(0, 0, 0); // Position the mesh
+        BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/DevarthSambare/Splat1/main/", "splat1.ply", scene, function(newMeshes) {
+            console.log("PLY Mesh Loaded: ", newMeshes);
+            if (newMeshes.length > 0) {
+                var mesh = newMeshes[0];
+
+                // Apply a basic material to the mesh for debugging
+                var basicMaterial = new BABYLON.StandardMaterial("basicMaterial", scene);
+                basicMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0); // Red color for visibility
+                mesh.material = basicMaterial;
+
+                // Adjust position, scaling, and rotation for better visibility
+                mesh.position = new BABYLON.Vector3(0, 0, 0); // Center it in the view
+                mesh.scaling = new BABYLON.Vector3(1, 1, 1); // Make sure it's visible
+                mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0); // Rotate to face the camera
+
+                console.log("Mesh scaling and positioning applied.");
+            } else {
+                console.error("No meshes loaded.");
+            }
         });
 
         return scene;
