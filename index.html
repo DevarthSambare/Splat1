@@ -3,38 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLY Viewer</title>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/loaders/PLYLoader.js"></script>
+    <title>Ply File Viewer</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
-    <h1>PLY File Viewer</h1>
-    <div id="container" style="width: 100vw; height: 100vh;"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ply-loader@1.0.0/ply-loader.min.js"></script>
+
     <script>
-        // Set up the scene, camera, and renderer
+        // Create scene, camera, and renderer
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('container').appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement);
 
-        // Load the PLY file
+        // Load the .ply file using the PlyLoader
         const loader = new THREE.PLYLoader();
-        loader.load('splat1.ply', function (geometry) {
-            const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.01 });
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
+        const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply'; // Your raw .ply file URL
+
+        loader.load(url, function (geometry) {
+            const material = new THREE.MeshBasicMaterial({ color: 0x0055ff, wireframe: true });
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+            mesh.rotation.x = -Math.PI / 2;  // Optional: Rotate mesh for better viewing
         });
 
-        // Set up camera position
-        camera.position.z = 5;
+        // Set the camera position
+        camera.position.z = 3;
 
-        // Animate the scene
+        // Render the scene
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
+
         animate();
+
+        // Adjust canvas size on window resize
+        window.addEventListener('resize', function () {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
     </script>
 </body>
 </html>
