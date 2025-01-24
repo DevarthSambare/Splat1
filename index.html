@@ -3,70 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ply File Viewer</title>
+    <title>3D Model Viewer - Splat1</title>
     <style>
-        body { margin: 0; overflow: hidden; }
+        body { margin: 0; }
         canvas { display: block; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/PLYLoader.js"></script>
 </head>
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/PLYLoader.js"></script>
+
     <script>
-        let scene, camera, renderer, mesh;
-        
-        // Initialize the scene
+        let scene, camera, renderer, model;
+
+        init();
+        animate();
+
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
-            
-            // Add a simple ambient light
-            const light = new THREE.AmbientLight(0x404040); // Ambient light
+
+            // Lighting
+            let light = new THREE.AmbientLight(0x404040, 5); // Ambient light
             scene.add(light);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
-            
-            // Load the PLY model using PLYLoader
+
+            // Load the PLY model
             const loader = new THREE.PLYLoader();
-            loader.load('path_to_your_model.ply', function(geometry) {
-                geometry.computeVertexNormals();  // Compute normals for better lighting
-                const material = new THREE.MeshStandardMaterial({ color: 0x0055ff });
-                mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-                mesh.scale.set(0.1, 0.1, 0.1);  // Adjust the scale as needed
-                mesh.position.set(0, -1, 0);  // Adjust position to center the object
-            }, function (xhr) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            }, function (error) {
-                console.log('Error loading PLY file: ', error);
+            loader.load('https://raw.githubusercontent.com/DevarthSambare/Splat1/main/splat1.ply', function (geometry) {
+                let material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+                model = new THREE.Mesh(geometry, material);
+                scene.add(model);
             });
-            
-            // Camera position
+
+            // Set camera position
             camera.position.z = 5;
 
-            // Add orbit controls
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.25;
-            controls.screenSpacePanning = false;
-            controls.maxPolarAngle = Math.PI / 2;
-
-            animate();
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize, false);
         }
 
-        // Animation loop
         function animate() {
             requestAnimationFrame(animate);
+            if (model) model.rotation.x += 0.01;  // Rotate model
+            if (model) model.rotation.y += 0.01;
             renderer.render(scene, camera);
         }
 
-        // Start the scene
-        init();
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
     </script>
 </body>
 </html>
