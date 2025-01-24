@@ -4,13 +4,16 @@ window.addEventListener('DOMContentLoaded', function() {
 
     var createScene = function() {
         var scene = new BABYLON.Scene(engine);
+
+        // Create camera and attach controls
         var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2, Math.PI / 4, 10, new BABYLON.Vector3(0, 0, 0), scene);
         camera.attachControl(canvas, true);
-        
+
+        // Lighting
         var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 1), scene);
         light.intensity = 0.7;
 
-        // Custom shader for point rendering
+        // Custom Shader for Point Rendering
         BABYLON.Effect.ShadersStore["customVertexShader"] = `
             precision highp float;
             attribute vec3 position;
@@ -33,6 +36,7 @@ window.addEventListener('DOMContentLoaded', function() {
             }
         `;
 
+        // Create custom shader material
         var customMaterial = new BABYLON.ShaderMaterial("customMaterial", scene, {
             vertex: "custom",
             fragment: "custom",
@@ -45,7 +49,8 @@ window.addEventListener('DOMContentLoaded', function() {
         BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/DevarthSambare/Splat1/main/", "splat1.ply", scene, function (newMeshes) {
             var mesh = newMeshes[0];
             mesh.material = customMaterial;
-            mesh.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1); // Scale down if necessary
+            mesh.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1); // Adjust scale as needed
+            mesh.position = new BABYLON.Vector3(0, 0, 0); // Position the mesh
         });
 
         return scene;
