@@ -11,8 +11,8 @@
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/PLYLoader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/PLYLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
     <script>
         let scene, camera, renderer, controls;
 
@@ -41,6 +41,8 @@
             // Load the PLY file using PLYLoader
             const loader = new THREE.PLYLoader();
             const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply'; // Replace with your PLY file URL
+            console.log('Attempting to load PLY file from: ' + url);
+
             loader.load(url, function (geometry) {
                 console.log('PLY File Loaded');
                 const material = new THREE.MeshStandardMaterial({ color: 0x0055ff, wireframe: false });
