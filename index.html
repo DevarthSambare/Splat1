@@ -3,42 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLY Viewer using Babylon.js</title>
+    <title>Ply File Viewer</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/PLYLoader.js"></script>
 </head>
 <body>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script>
-        // Create the scene and the canvas
-        var canvas = document.createElement("canvas");
-        document.body.appendChild(canvas);
-        var engine = new BABYLON.Engine(canvas, true);
-        var scene = new BABYLON.Scene(engine);
-
-        // Create a camera
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
-        camera.attachControl(canvas, true);
-
-        // Create a light source
-        var light = new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Up(), scene);
-
-        // Load the PLY model
-        BABYLON.SceneLoader.Append("", "https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply", scene, function () {
-            console.log("PLY Model Loaded Successfully");
-            engine.runRenderLoop(function () {
-                scene.render();
+        let scene, camera, renderer, mesh;
+        
+        // Initialize the scene
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            
+            // Add a simple ambient light
+            const light = new THREE.AmbientLight(0x404040); // Ambient light
+            scene.add(light);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // Load the PLY model using PLYLoader
+            const loader = new THREE.PLYLoader();
+            loader.load('path_to_your_model.ply', function(geometry) {
+                geometry.computeVertexNormals();  // Compute normals for better lighting
+                const material = new THREE.MeshStandardMaterial({ color: 0x0055ff });
+                mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+                mesh.scale.set(0.1, 0.1, 0.1);  // Adjust the scale as needed
+                mesh.position.set(0, -1, 0);  // Adjust position to center the object
+            }, function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            }, function (error) {
+                console.log('Error loading PLY file: ', error);
             });
-        }, function (scene, message) {
-            console.log("Error loading PLY: " + message);
-        });
+            
+            // Camera position
+            camera.position.z = 5;
 
-        // Handle resizing of the window
-        window.addEventListener('resize', function () {
-            engine.resize();
-        });
+            // Add orbit controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.screenSpacePanning = false;
+            controls.maxPolarAngle = Math.PI / 2;
+
+            animate();
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Start the scene
+        init();
     </script>
 </body>
 </html>
