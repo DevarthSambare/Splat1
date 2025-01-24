@@ -12,7 +12,8 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js"></script>
-    <!-- Correct import for OrbitControls -->
+
+    <!-- OrbitControls script -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <script>
@@ -37,13 +38,6 @@
             light.position.set(0, 0, 10);
             scene.add(light);
 
-            // Check if PLYLoader is loaded
-            if (THREE.PLYLoader) {
-                console.log('PLYLoader is available');
-            } else {
-                console.error('PLYLoader is not available');
-            }
-
             // Load the PLY model
             const loader = new THREE.PLYLoader();
             const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply';
@@ -61,7 +55,7 @@
                 console.error('Error loading PLY file: ', error);  // Debugging error handling
             });
 
-            // Set up OrbitControls correctly
+            // Set up OrbitControls correctly (Fix for error)
             controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // Handle window resize
