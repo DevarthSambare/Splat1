@@ -12,7 +12,7 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/PLYLoader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/TrackballControls.js"></script>
 
     <script>
         let scene, camera, renderer, controls, loader;
@@ -24,11 +24,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            // Set up OrbitControls
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.25;
-            controls.screenSpacePanning = false;
+            // Set up TrackballControls
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls.rotateSpeed = 2.0;
+            controls.zoomSpeed = 1.2;
+            controls.panSpeed = 0.8;
 
             // Set up lighting
             const light = new THREE.AmbientLight(0xffffff, 1);
