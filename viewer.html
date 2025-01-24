@@ -3,81 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLY Viewer with Three.js</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
-    </style>
+    <title>AR Viewer</title>
+    <!-- Include AR.js and Three.js -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
-<body>
-    <!-- Include Three.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- Include the PLYLoader -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/PLYLoader.js"></script>
-
-    <script>
-        let scene, camera, renderer, object;
-
-        // Set up the scene, camera, and renderer
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            // Load the PLY model from the URL
-            const loader = new THREE.PLYLoader();
-            const url = 'https://raw.githubusercontent.com/DevarthSambare/Splat1/f1a4c002e832684aae7d3eb99ecbed681ef8b495/splat1.ply';  // PLY file URL
-
-            loader.load(url, function (geometry) {
-                // Create a material and mesh for the loaded geometry
-                object = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x0055ff, wireframe: false }));
-                scene.add(object);
-
-                // Scale the object down to make it fit the view
-                object.scale.set(0.5, 0.5, 0.5);
-
-                // Set the camera's position to look at the object
-                camera.position.z = 3;
-            }, undefined, function (error) {
-                console.error('Error loading PLY file:', error);
-                alert('Failed to load the PLY file. Please check the URL or your CORS settings.');
-            });
-
-            // Event listener for mouse movement
-            document.addEventListener('mousemove', onMouseMove, false);
-        }
-
-        // Handle mouse movement to control the camera's position
-        let mouseX = 0, mouseY = 0;
-        function onMouseMove(event) {
-            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-        }
-
-        // Animation function to render the scene
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Rotate the object
-            if (object) {
-                object.rotation.x += 0.01;
-                object.rotation.y += 0.01;
-            }
-
-            // Update the camera's position based on mouse movement
-            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 2 - camera.position.y) * 0.05;
-            camera.lookAt(scene.position);
-
-            renderer.render(scene, camera);
-        }
-
-        // Initialize the scene and start the animation
-        init();
-        animate();
-    </script>
+<body style="margin: 0; overflow: hidden;">
+    <!-- Setup AR scene -->
+    <a-scene embedded arjs>
+        <!-- Marker for AR display -->
+        <a-marker preset="hiro">
+            <!-- GLTF model to load -->
+            <a-entity 
+                gltf-model="url(model.glb)" 
+                scale="0.5 0.5 0.5"
+                position="0 0 0"
+                rotation="0 180 0">
+            </a-entity>
+        </a-marker>
+        <!-- Camera to view the AR scene -->
+        <a-camera></a-camera>
+    </a-scene>
 </body>
 </html>
